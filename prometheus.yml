@@ -1,0 +1,52 @@
+# https://docs.docker.com/config/daemon/prometheus/
+# my global config
+global:
+  scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+      monitor: "codelab-monitor"
+
+# Load rules once and periodically evaluate them according to the global "evaluation_interval".
+rule_files:
+  # - "first.rules"
+  # - "second.rules"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it"s Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: "prometheus"
+    # metrics_path defaults to "/metrics"
+    # scheme defaults to "http".
+
+# Metrik adını değiştirmek
+    metric_relabel_configs:
+    - source_labels: [__name__]
+      regex: mongodb_ss_catalogStats_(.*)
+      target_label: __name__
+      replacement: "cem_${1}"
+      action: replace
+
+# mongodb_ss_catalogStats_capped Metriğinin "job" özelliğinin içeriğini değiştirmek
+# Önce sadece metrik adı değişik gelirken           : cem_capped{instance="cexp:9123", job="prometheus", rs_state="0"}
+# 15sn Sonra metriği çekince job içeriği de değişir : cem_capped{instance="cexp:9123", job="cem_job_", rs_state="0"}
+    - source_labels: [cem_capped]
+      regex: (.*)
+      target_label: job
+      replacement: "cem_job_${1}"
+      action: replace
+
+
+    static_configs:
+      - targets: ["host.docker.internal:9090","cexp:9123"] # Only works on Docker Desktop for Windows
+
+  - job_name: "docker"
+         # metrics_path defaults to "/metrics"
+         # scheme defaults to "http".
+
+    static_configs:
+      - targets: ["192.168.65.1:9323"]

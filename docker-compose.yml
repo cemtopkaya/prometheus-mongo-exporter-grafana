@@ -1,0 +1,81 @@
+# https://docs.docker.com/config/daemon/prometheus/
+
+version: '3'
+
+services:
+
+  db-mongo:
+    container_name: cmongodb
+    hostname: host-mongodb
+    image: mongo
+    environment:
+      - MONGODB_URL=mongodb://cmongodb:27017
+    ports:
+    - published: 27017
+      target: 27017
+    restart: unless-stopped
+
+
+# docker rm -f prom-me && \
+# docker run --rm --name prom-me \
+#        -p 9123:9123 \
+#        noenv/mongo-exporter \
+#          --web.listen-address=:9123 \
+#          --mongodb.uri=mongodb://172.17.0.3:27017/?tls=false&tlsInsecure=true
+  exporter:
+    container_name: cexp
+    hostname: host-exp
+    image: noenv/mongo-exporter
+    depends_on:
+      db-mongo:
+        condition: service_started
+    environment:
+      MONGODB_URL: mongodb://cmongodb:27017
+    ports:
+    - 9123:9123
+   #  volumes:
+   #  - /c/_Projects/_PROMETHEUS/_EXPORTERS/mongo/mongodb_exporter:/go/src/github.com/dcu/mongodb_exporter:rw
+    command: --web.listen-address=:9123 --mongodb.uri=mongodb://cmongodb:27017/?tls=false
+    links:
+    - db-mongo
+    depends_on:
+      db-mongo:
+        condition: service_started
+
+
+#  docker service create --replicas 1 --name my-prometheus
+#     --mount type=bind,source=C:/tmp/prometheus.yml,destination=/etc/prometheus/prometheus.yml
+#     --publish published=9090,target=9090,protocol=tcp
+#     prom/prometheus
+  prometheus:
+    container_name: cprom
+    hostname: host-prom
+    image: prom/prometheus
+    privileged: true
+    environment:
+      - HEDE=hodo
+    links:
+    - exporter
+    ports:
+     - 9090:9090
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+
+#   docker run -d \
+#       -p 3000:3000 \
+#       --name=grafana \
+#       -e "GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource" \
+#       grafana/grafana
+  grafana:
+    container_name: cgrafana
+    hostname: host-grafana
+    image: grafana/grafana
+    privileged: true
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+    links:
+    - prometheus
+    ports:
+     - 3000:3000
+    
