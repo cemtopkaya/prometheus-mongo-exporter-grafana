@@ -28,6 +28,7 @@ docker run --rm --name prom-me \
          --web.listen-address=:9123 \
          --mongodb.uri=mongodb://172.17.0.3:27017/?tls=false&tlsInsecure=true
 ```
+Mongo metriklerini veritabanından çekerek Prometheus'un çekebileceği hale getiren Node Exporter 9123 portunda çalışıyor ve internet gezgininden http://localhost:9123/ ve http://localhost:9123/metrics adresilerinden erişilebilinir.
 
 Prometheus'u ayaklandırmak için 
 ```shell
@@ -46,4 +47,4 @@ Sadece Grafayı ayaklandırmak için:
      grafana/grafana
 ```
 
-Başlatmak için http://localhost:3000 adresine (kullanıcı adı ve şifresi "admin" ile) girilir ve Data Source kısmına Prometheus eklenerek Prometheus'un konteynerler arasında erişilebileceği URL adresi (http://cprom:9090) yazılarak "Save & Test" düğmesine basılarak eklenir.
+Grafana'yı başlatmak için http://localhost:3000 adresine (kullanıcı adı ve şifresi "admin" ile) girilir ve Data Source kısmına Prometheus eklenerek Prometheus'un konteynerler arasında erişilebileceği URL adresi (http://cprom:9090) yazılarak "Save & Test" düğmesine basılarak eklenir.
