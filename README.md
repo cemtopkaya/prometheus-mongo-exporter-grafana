@@ -48,3 +48,29 @@ Sadece Grafayı ayaklandırmak için:
 ```
 
 Grafana'yı başlatmak için http://localhost:3000 adresine (kullanıcı adı ve şifresi "admin" ile) girilir ve Data Source kısmına Prometheus eklenerek Prometheus'un konteynerler arasında erişilebileceği URL adresi (http://cprom:9090) yazılarak "Save & Test" düğmesine basılarak eklenir.
+
+### Metrik adını değiştirmek
+```
+    metric_relabel_configs:
+    - source_labels: [__name__]
+      regex: mongodb_ss_catalogStats_(.*)
+      target_label: __name__
+      replacement: "cem_${1}"
+      action: replace
+    - source_labels: [__name__]
+      regex: AttSessionImOrig
+      target_label: __name__
+      replacement: "attSession_im_orig"
+      action: replace
+```
+
+mongodb_ss_catalogStats_capped Metriğinin "job" özelliğinin içeriğini değiştirmek
+Önce sadece metrik adı değişik gelirken           : cem_capped{instance="cexp:9123", job="prometheus", rs_state="0"}
+15sn Sonra metriği çekince job içeriği de değişir : cem_capped{instance="cexp:9123", job="cem_job_", rs_state="0"}
+```
+    - source_labels: [cem_capped]
+      regex: (.*)
+      target_label: jem
+      replacement: "cem_job_${1}"
+      action: replace
+```
