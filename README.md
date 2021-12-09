@@ -5,26 +5,26 @@ Tüm konteynerleri >
 Çalıştırmak için:
 
 ```shell
-docker-compose -f "_PROMETHEUS\docker-compose.yml" up -d --build 
+$ docker-compose -f "docker-compose.yml" up -d --build 
 ```
 
 Durdurmak için:
 
 ```shell
-docker-compose -f "_PROMETHEUS\docker-compose.yml" down
+$ docker-compose -f "_PROMETHEUS\docker-compose.yml" down
 ```
 
 Tek tek >
 Mongo veritabanını ayaklandırmak için
 ```shell
-docker run -p 27017:27017 --name cmongodb mongo
+$ docker run -p 27017:27017 --name cmongodb mongo
 ```
 
 Mongo metriklerini ihraç edebilecek NodeExporter'ı ayaklandırmak için
 ```shell
-docker run --rm --name prom-me \
-       -p 9123:9123 \
-       noenv/mongo-exporter \
+$ docker run --rm --name prom-me \
+         -p 9123:9123 \
+         noenv/mongo-exporter \
          --web.listen-address=:9123 \
          --mongodb.uri=mongodb://172.17.0.3:27017/?tls=false&tlsInsecure=true
 ```
@@ -32,7 +32,7 @@ Mongo metriklerini veritabanından çekerek Prometheus'un çekebileceği hale ge
 
 Prometheus'u ayaklandırmak için 
 ```shell
-docker service create --replicas 1 --name my-prometheus
+$ docker service create --replicas 1 --name my-prometheus
    --mount type=bind,source=C:/tmp/prometheus.yml,destination=/etc/prometheus/prometheus.yml
    --publish published=9090,target=9090,protocol=tcp
    prom/prometheus
@@ -40,7 +40,7 @@ docker service create --replicas 1 --name my-prometheus
 
 Sadece Grafayı ayaklandırmak için:
 ```shell
- docker run -d \
+$ docker run -d \
      -p 3000:3000 \
      --name=grafana \
      -e "GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource" \
