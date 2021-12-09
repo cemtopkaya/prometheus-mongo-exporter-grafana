@@ -11,7 +11,7 @@ $ docker-compose -f "docker-compose.yml" up -d --build
 Durdurmak için:
 
 ```shell
-$ docker-compose -f "_PROMETHEUS\docker-compose.yml" down
+$ docker-compose -f "docker-compose.yml" down
 ```
 
 Tek tek >
