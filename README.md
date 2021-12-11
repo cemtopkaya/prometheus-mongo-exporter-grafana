@@ -49,7 +49,23 @@ $ docker run -d \
 
 Grafana'yı başlatmak için http://localhost:3000 adresine (kullanıcı adı ve şifresi "admin" ile) girilir ve Data Source kısmına Prometheus eklenerek Prometheus'un konteynerler arasında erişilebileceği URL adresi (http://cprom:9090) yazılarak "Save & Test" düğmesine basılarak eklenir.
 
+### Etiket adını değiştirmek
+
+![relabel_config özellikleri](https://user-images.githubusercontent.com/261946/145671511-c4d3f977-10a1-459a-899d-11c12d4c8389.png)
+![image](https://user-images.githubusercontent.com/261946/145671565-3dc2f4ad-90cc-47be-93ac-41f682baa869.png)
+
+
+- `source_labels` The source labels select values from existing labels. Their content is concatenated using the configured separator and matched against the configured regular expression for the replace, keep, and drop actions.
+- `separator` (default ‘;’) Separator placed between concatenated source label values.
+- `target_label` – mandatory for replace actions. Label to which the resulting value is written in a replace action. It is mandatory for replace actions. Regex capture groups are available.
+- `regex` (default ‘.*’) Regular expression against which the extracted value is matched.
+- `modulus` Modulus to take of the hash of the source label values.
+- `replacement` (default ‘$1’) Replacement value against which a regex replace is performed if the regular expression matches. Regex capture groups are available.
+- `action` (default ‘replace’) Action to perform based on regex matching.
+
+
 ### Metrik adını değiştirmek
+
 ```
     metric_relabel_configs:
     - source_labels: [__name__]
